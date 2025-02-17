@@ -68,8 +68,8 @@ int roundDownCorrectly(int num) {
 void reachTargetTemperature() {
     Serial.println("Starting temperature adjustment...");
 
-    // Call AB command 3 times first
-    for (int i = 0; i < 3; i++) {
+    // Call AB command 2 times first
+    for (int i = 0; i < 2; i++) {
         shortPressAB();
     }
 
