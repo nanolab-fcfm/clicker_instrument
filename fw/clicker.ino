@@ -14,7 +14,6 @@ void setup() {
     digitalWrite(B, LOW);  // Ensure D2 (GPIO4) starts at 0V
 
     Serial.begin(115200);  // Start serial communication
-    Serial.println("ESP8266 Ready! Send 'A', 'AA', 'B', 'BB', 'AB', 'SCTxxx', 'STTxxx', 'GO', 'RCT', or 'RTT'.");
 }
 
 // Function to press a pin for 100ms (short press)
@@ -22,7 +21,6 @@ void shortPress(int pin) {
     digitalWrite(pin, HIGH);
     delay(100);
     digitalWrite(pin, LOW);
-    Serial.println("Short press executed");
     delay(pressDelay); // Wait before next action
 }
 
@@ -31,7 +29,6 @@ void longPress(int pin) {
     digitalWrite(pin, HIGH);
     delay(500);
     digitalWrite(pin, LOW);
-    Serial.println("Long press executed");
     delay(pressDelay); // Wait before next action
 }
 
@@ -42,7 +39,6 @@ void shortPressAB() {
     delay(100);
     digitalWrite(A, LOW);
     digitalWrite(B, LOW);
-    Serial.println("AB short press executed");
     delay(pressDelay); // Wait before next action
 }
 
@@ -66,8 +62,6 @@ int roundDownCorrectly(int num) {
 
 // Function to automatically adjust from CT to TT (minimizing time)
 void reachTargetTemperature() {
-    Serial.println("Starting temperature adjustment...");
-
     // Call AB command 2 times first
     for (int i = 0; i < 2; i++) {
         shortPressAB();
@@ -84,17 +78,11 @@ void reachTargetTemperature() {
                 
                 longPress(A);
                 CT = nextTemp;
-                Serial.print("Increased to: ");
-                Serial.print(CT);
-                Serial.println("°C");
             }
 
             while (CT < TT) {
                 shortPress(A);
                 CT += 1;
-                Serial.print("Increased to: ");
-                Serial.print(CT);
-                Serial.println("°C");
             }
         } 
         else if (CT > TT) {
@@ -104,28 +92,18 @@ void reachTargetTemperature() {
                 
                 longPress(B);
                 CT = nextTemp;
-                Serial.print("Decreased to: ");
-                Serial.print(CT);
-                Serial.println("°C");
             }
 
             while (CT > TT) {
                 shortPress(B);
                 CT -= 1;
-                Serial.print("Decreased to: ");
-                Serial.print(CT);
-                Serial.println("°C");
             }
         }
     }
 
-    Serial.println("Target temperature reached!");
-    
+   
     // **Set Current Temperature to Target Temperature**
     CT = TT;
-    Serial.print("Updated Current Temperature to: ");
-    Serial.print(CT);
-    Serial.println("°C");
 }
 
 void loop() {
@@ -147,43 +125,27 @@ void loop() {
 
 void processCommand(String command) {
     if (command == "A") {
-        Serial.println("Received 'A': Executing short press on A");
         shortPress(A);
     } else if (command == "AA") {
-        Serial.println("Received 'AA': Executing long press on A");
         longPress(A);
     } else if (command == "B") {
-        Serial.println("Received 'B': Executing short press on B");
         shortPress(B);
     } else if (command == "BB") {
-        Serial.println("Received 'BB': Executing long press on B");
         longPress(B);
     } else if (command == "AB") {
-        Serial.println("Received 'AB': Executing short press on A and B simultaneously");
         shortPressAB();
     } else if (command.startsWith("SCT")) {
         CT = command.substring(3).toInt();
-        Serial.print("Set Current Temperature to: ");
-        Serial.print(CT);
-        Serial.println("°C");
     } else if (command.startsWith("STT")) {
         TT = command.substring(3).toInt();
-        Serial.print("Set Target Temperature to: ");
-        Serial.print(TT);
-        Serial.println("°C");
     } else if (command == "RCT") {
-        Serial.print("Current Temperature: ");
-        Serial.print(CT);
-        Serial.println("°C");
+        Serial.println(CT);
     } else if (command == "RTT") {
-        Serial.print("Target Temperature: ");
-        Serial.print(TT);
-        Serial.println("°C");
+        Serial.println(TT);
     } else if (command == "GO") {
-        Serial.println("Starting temperature adjustment...");
         reachTargetTemperature();
     } else {
-        Serial.print("Unknown command: ");
+        Serial.print("ERROR! Unknown command: ");
         Serial.println(command);
     }
 }
