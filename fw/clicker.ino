@@ -146,7 +146,6 @@ void processCommand(String command) {
         reachTargetTemperature();
     } else if (command == "*IDN?") {
         Serial.println("ROSATECH,CLK100,P0000003,1.0.0");
-    }
     } else {
         Serial.print("ERROR! Unknown command: ");
         Serial.println(command);
