@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "nanolab_hw_library")(type "KiCad")(uri "${KIPRJMOD}/nanolab_hw_library.kicad_sym")(options "")(descr ""))
+)
