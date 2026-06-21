@@ -11,25 +11,34 @@ directly from the KiCad board (`hw/clicker.kicad_pcb`) with `kicad-cli`.
   camera-controls
   auto-rotate
   touch-action="pan-y"
+  environment-image="neutral"
+  tone-mapping="neutral"
+  exposure="0.95"
   shadow-intensity="1"
-  exposure="1.1"
-  style="width: 100%; height: 480px; background-color: #f5f5f5; border-radius: 8px;">
+  shadow-softness="0.8"
+  style="width: 100%; height: 520px; border-radius: 8px; background: radial-gradient(circle at 50% 35%, #2b313a 0%, #14161a 100%);">
 </model-viewer>
 
-!!! note
-    The board, copper, drill holes and the through-hole components (resistors
-    `R101`–`R104`, transistors `Q101`/`Q102`, header `J101`) are rendered from
-    their KiCad 3D models. The ESP8266 module and the temperature module use
-    custom footprints that don't yet have 3D models assigned, so they appear as
-    their footprint pads without a body. To regenerate the model after a board
-    change (no system install needed):
+!!! note "About the model"
+    The board (green soldermask), copper/pads (gold) and the through-hole
+    components — resistors `R101`–`R104`, transistors `Q101`/`Q102` and header
+    `J101` — are shown. The ESP8266 module and the temperature module use custom
+    footprints with no 3D model assigned, so they appear as their footprint pads
+    without a body.
+
+    KiCad's GLB export carries the **board** colours but drops the **component**
+    materials (they would otherwise render solid white), so component meshes are
+    recoloured in a small post-processing pass. To regenerate the model after a
+    board change (no system install needed — just Docker):
 
     ```bash
+    # 1) Export the board (with component geometry) to GLB
     docker run --rm -e KICAD9_3DMODEL_DIR=/usr/share/kicad/3dmodels \
       -v "$PWD":/work -w /work kicad/kicad:9.0 bash -lc \
       'apt-get update -qq && apt-get install -y --no-install-recommends kicad-packages3d >/dev/null && \
-       kicad-cli pcb export glb -f --include-tracks --include-zones --subst-models \
+       kicad-cli pcb export glb -f --include-tracks --include-zones \
          -o docs/assets/3d/clicker.glb hw/clicker.kicad_pcb'
+    # 2) Recolour the (material-less) component meshes — see tools/recolor_glb.py
     ```
 
 ## PCB Design
